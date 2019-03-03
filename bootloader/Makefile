@@ -1,4 +1,4 @@
-NAME = mbr
+NAME = bootloader
 QEMU = qemu-system-i386
 Q_FLAGS = -boot a
 Q_DEBUG = -s -S
