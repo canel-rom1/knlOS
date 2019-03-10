@@ -1,7 +1,7 @@
 bits 16
-org 0x7c00
+org 0x8000
 
-	jmp	boot
+	jmp	start
 
 display_enable:
 	push	bp
@@ -58,8 +58,7 @@ println:
 	pop	bp
 	ret
 
-boot:
-	sti
+start:
 	
 	call	display_enable
 
@@ -71,8 +70,13 @@ boot:
 	call	println
 	add	sp,2
 
+halt:
+	jmp	$
+	hlt
+	ret
+
 hello_world: db 'Hello CANEL',0
-glmf: db 'Bienvenu dans le demarrage',0
+glmf: db 'Bienvenu dans le noyau',0
 
 times 510 - ($-$$) db 0
 dw 0xaa55

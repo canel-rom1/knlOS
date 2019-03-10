@@ -1,21 +1,26 @@
-NAME = mbr
+NAME = system
+ASM_FLAGS = -fbin -g
 QEMU = qemu-system-i386
-Q_FLAGS = -boot a
+Q_FLAGS = #-boot a
 Q_DEBUG = -s -S
 
-all: $(NAME)
+all: bootloader kernel
+	cat bootloader kernel > $(NAME)
 
-$(NAME): $(NAME).asm
-	nasm -isrc/ -f bin $<
+kernel: kernel.asm
+	nasm $(ASM_FLAGS) $<
+
+bootloader: bootloader.asm
+	nasm $(ASM_FLAGS) $<
 
 run: $(NAME)
-	$(QEMU) $(Q_FLAGS) -fda $<
+	$(QEMU) $(Q_FLAGS) $<
 
 debug: $(NAME)
 	tmux splitw -v -l6 \
-		"$(QEMU) $(Q_FLAGS) $(Q_DEBUG) -fda $<"
+		"$(QEMU) $(Q_DEBUG) $(Q_FLAGS) $<"
+	sleep 2
 	gdb -q -command=.initgdb
 
 clean: $(NAME)
-	rm -f $(NAME).o
-	rm -f $(NAME)
+	rm -f kernel bootloader system

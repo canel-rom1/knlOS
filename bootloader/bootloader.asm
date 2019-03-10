@@ -1,0 +1,19 @@
+bits 16
+org 0x7C00
+
+	mov ah, 0
+	int 0x13
+
+start:
+	mov bx, 0x8000
+	mov al, 0x01
+	mov ch, 0x0
+	mov dh, 0x0
+	mov cl, 0x02
+	mov ah, 0x02
+	int 0x13
+
+	jmp 0x8000
+
+	times 510 - ($-$$) db 0
+	dw 0xaa55

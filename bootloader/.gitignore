@@ -1,4 +1,8 @@
 *.swp
 .gdb_history
+bootloader
+hello_bios
+kernel
 mbr
+system
 peda-session-unknown.txt
