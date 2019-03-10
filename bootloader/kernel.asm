@@ -1,29 +1,82 @@
-org 0x8000 
 bits 16
-mov si, msg
-call printNullTerminatedString
+org 0x8000
 
-jmp $   ; this freezes the system, best for testing
-hlt		;this makes a real system halt
-ret     ;this makes qemu halt, to ensure everything works we add both
+	jmp	start
 
-printCharacter:
-	;before calling this function al must be set to the character to print
-	mov bh, 0x00 ;page to write to, page 0 is displayed by default
-	mov bl, 0x00 ;color attribute, doesn't matter for now
-	mov ah, 0x0E 
-	int 0x10 ; int 0x10, 0x0E = print character in al
-	ret	
-printNullTerminatedString:
-	pusha ;save all registers to be able to call this from where every we
-	.loop:
-		lodsb ;loads byte from si into al and increases si
-		test al, al ;test if al is 0 which would mean the string
-		jz .end
-		call printCharacter ;print character in al
-	jmp .loop ;print next character
-	.end:
-	popa ;restore registers to original state
+display_enable:
+	push	bp
+	mov	bp,sp
+
+	mov	ah,0x0
+	mov	al,0x7
+	int	0x10
+
+	mov	sp,bp
+	pop	bp
 	ret
-msg db "Hello World!"
-times 512-($-$$) db 0 ;kernel must have size multiple of 512 so let's pad it to
+
+print:
+	push	bp
+	mov	bp,sp
+
+	mov	si,[bp+4]
+
+.loop:
+	lodsb
+	cmp	al,0
+	je	.end
+
+	mov	ah,0x0e
+	mov	bx,0
+	int	0x10
+
+	jmp	.loop
+
+.end:
+	mov	sp,bp
+	pop	bp
+	ret
+
+println:
+	push	bp
+	mov	bp,sp
+
+	push	word [bp+4]
+	call	print
+	add	sp,2
+
+	mov	ah,0x03
+	int	0x10
+
+	inc	dh
+	mov	dl,0
+	
+	mov	ah,0x2
+	int	0x10
+
+	mov	sp,bp
+	pop	bp
+	ret
+
+start:
+	
+	call	display_enable
+
+	push	hello_world
+	call	println
+	add	sp,2
+
+	push	glmf
+	call	println
+	add	sp,2
+
+halt:
+	jmp	$
+	hlt
+	ret
+
+hello_world: db 'Hello CANEL',0
+glmf: db 'Bienvenu dans le noyau',0
+
+times 510 - ($-$$) db 0
+dw 0xaa55
