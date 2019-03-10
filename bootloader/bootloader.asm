@@ -1,31 +1,19 @@
 bits 16
 org 0x7c00
 
-	jmp	boot
 
-read_hd:
-	push	bp
-	mov	bp,sp
-
-	mov	ah, 0x02
-	mov	al, 0x01
-	mov	dl, 0x00
-	mov	ch, 0x00
-	mov	dh, 0x00
-	mov	cl, 0x01
-	mov	bx, 0x7e00
-
+	mov	ah, 0
 	int	0x13
 
-	mov	sp,bp
-	pop	bp
-	ret
+	mov bx, 0x8000     ; bx = address to write the kernel to
+	mov al, 1 		   ; al = amount of sectors to read
+	mov ch, 0          ; cylinder/track = 0
+	mov dh, 0          ; head           = 0
+	mov cl, 1          ; sector         = 2
+	mov ah, 2          ; ah = 2: read from drive
+	int 0x13
 
-boot:
-	sti
-
-	call	read_hd
-	
+	jmp 0x8000
 
 times 510 - ($-$$) db 0
 dw 0xaa55

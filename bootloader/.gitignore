@@ -1,5 +1,6 @@
-*.save
 *.swp
 bootloader
+kernel
 hello_bios
+system
 peda-session-unknown.txt
