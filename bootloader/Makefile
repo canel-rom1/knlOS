@@ -24,3 +24,9 @@ debug: $(NAME)
 
 clean: $(NAME)
 	rm -f kernel bootloader system
+
+edit:
+	vim bootloader.asm \
+	    kernel.asm \
+	    libgraph.asm \
+	    Makefile

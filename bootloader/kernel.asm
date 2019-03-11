@@ -1,11 +1,17 @@
 bits 16
-org 0x8000
+org 0x0
 
 	jmp	start
 	%include "libgraph.asm"
 
 start:
-	
+	mov	ax, 0x100
+	mov	ds, ax
+	mov	es, ax
+	mov	ax, 0x8000
+	mov	ss, ax
+	mov	sp, 0xf000
+
 	call	display_enable
 
 	push	hello_world
@@ -23,6 +29,3 @@ halt:
 
 hello_world: db 'Hello CANEL',0
 glmf: db 'Bienvenu dans le noyau',0
-
-times 510 - ($-$$) db 0
-dw 0xaa55
