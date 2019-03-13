@@ -10,6 +10,18 @@ display_enable:
 	pop	bp
 	ret
 
+printchar:
+	push	bp
+	mov	bp, sp
+
+	mov	ah,0x0E
+	mov	bx,0
+	int	0x10
+
+	mov	sp,bp
+	pop	bp
+	ret
+
 print:
 	push	bp
 	mov	bp,sp
@@ -21,9 +33,7 @@ print:
 	cmp	al,0
 	je	.end
 
-	mov	ah,0x0e
-	mov	bx,0
-	int	0x10
+	call	printchar
 
 	jmp	.loop
 
